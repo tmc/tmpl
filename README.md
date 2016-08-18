@@ -2,9 +2,18 @@
 
 Command tmpl renders a template with the current env vars as input.
 
-It effectively exposes Go's <a href="http://golang.org/pkg/text/template/">http://golang.org/pkg/text/template/</a> for use in shells.
+```sh
+$ tmpl -h
+Usage of tmpl:
+  -f string
+         	Input source (default "-")
+```
 
-Reference text/template documentation for template language specification.
+It includes all of the template helpers from [sprig](https://godoc.org/github.com/Masterminds/sprig).
+
+It effectively exposes Go's [text/template](http://golang.org/pkg/text/template) for use in shells.
+
+Reference [text/template](http://golang.org/pkg/text/template) documentation for template language specification.
 
 ### Example 1
 Given a file 'a' with contents:

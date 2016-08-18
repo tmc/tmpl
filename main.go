@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"html/template"
+	"text/template"
 
 	"github.com/Masterminds/sprig"
 )
@@ -49,7 +49,7 @@ func tmpl(in io.Reader, out io.Writer, ctx interface{}) error {
 	if err != nil {
 		return err
 	}
-	tmpl, err := template.New("format string").Funcs(sprig.FuncMap()).Parse(string(i))
+	tmpl, err := template.New("format string").Funcs(sprig.TxtFuncMap()).Parse(string(i))
 	if err != nil {
 		return err
 	}
