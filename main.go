@@ -8,21 +8,25 @@ import (
 	"os"
 	"strings"
 
+	htmltemplate "html/template"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
 )
 
-var input = flag.String("f", "-", "Input source")
+var (
+	flagInput = flag.String("f", "-", "Input source")
+	flagHTML  = flag.Bool("html", false, "If true, use html/tmplate instead of text/template")
+)
 
 func main() {
 	flag.Parse()
-	in, err := getInput(*input)
+	in, err := getInput(*flagInput)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error opening input:", err)
 		os.Exit(1)
 	}
-	if err := tmpl(in, os.Stdout, envMap()); err != nil {
+	if err := tmpl(in, *flagHTML, os.Stdout, envMap()); err != nil {
 		fmt.Fprintln(os.Stderr, "error opening input:", err)
 		os.Exit(1)
 	}
@@ -44,14 +48,23 @@ func envMap() map[string]string {
 	return result
 }
 
-func tmpl(in io.Reader, out io.Writer, ctx interface{}) error {
+func tmpl(in io.Reader, htmlMode bool, out io.Writer, ctx interface{}) error {
 	i, err := ioutil.ReadAll(in)
 	if err != nil {
 		return err
 	}
-	tmpl, err := template.New("format string").Funcs(sprig.TxtFuncMap()).Parse(string(i))
-	if err != nil {
-		return err
+
+	if htmlMode {
+		tmpl, err := htmltemplate.New("format string").Funcs(sprig.HtmlFuncMap()).Parse(string(i))
+		if err != nil {
+			return err
+		}
+		return tmpl.Execute(out, ctx)
+	} else {
+		tmpl, err := template.New("format string").Funcs(sprig.TxtFuncMap()).Parse(string(i))
+		if err != nil {
+			return err
+		}
+		return tmpl.Execute(out, ctx)
 	}
-	return tmpl.Execute(out, ctx)
 }
