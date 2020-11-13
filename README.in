@@ -4,7 +4,7 @@ Command tmpl renders a template with the current env vars as input.
 
 ```sh
 $ tmpl -h
-
+{{.HELP}}
 ```
 
 It includes all of the template helpers from [sprig](https://godoc.org/github.com/Masterminds/sprig).
@@ -17,9 +17,9 @@ Reference [text/template](http://golang.org/pkg/text/template) documentation for
 Given a file 'a' with contents:
 
 
-	{{ range $key, $value := . }}
-	  KEY:{{ $key }} VALUE:{{ $value }}
-	{{ end }}
+	{{"{{"}} range $key, $value := . {{"}}"}}
+	  KEY:{{"{{"}} $key {{"}}"}} VALUE:{{"{{"}} $value {{"}}"}}
+	{{"{{"}} end {{"}}"}}
 
 Invoking
 
@@ -36,7 +36,7 @@ Produces
 Given a file 'b' with contents:
 
 
-	VERSION={{.HEAD}}
+	VERSION={{"{{"}}.HEAD{{"}}"}}
 
 Invoking
 

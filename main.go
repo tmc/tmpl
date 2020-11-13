@@ -16,7 +16,7 @@ import (
 
 var (
 	flagInput = flag.String("f", "-", "Input source")
-	flagHTML  = flag.Bool("html", false, "If true, use html/tmplate instead of text/template")
+	flagHTML  = flag.Bool("html", false, "If true, use html/template instead of text/template")
 )
 
 func main() {
