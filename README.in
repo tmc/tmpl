@@ -18,6 +18,25 @@ It effectively exposes Go's [text/template](http://golang.org/pkg/text/template)
 
 Reference [text/template](http://golang.org/pkg/text/template) documentation for template language specification.
 
+## Safe Dockerfile Inclusion
+
+To safely include in your build pipelines:
+```Dockerfile
+FROM ubuntu:bionic
+
+RUN apt-get update
+RUN apt-get install -y curl
+
+ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/{{ .LATEST_TAG }}/tmpl_linux_amd64
+ARG TMPL_SHA256SUM={{ .LINUX_SHASUM }}
+RUN curl -fsSLo tmpl ${TMPL_URL} \
+		&& sha256sum tmpl \
+		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
+		&& chmod +x tmpl \
+		&& mv tmpl /usr/local/bin/tmpl
+```
+
+
 ### Example 1
 Given a file 'a' with contents:
 
