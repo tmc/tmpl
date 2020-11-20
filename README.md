@@ -36,7 +36,7 @@ RUN apt-get update
 RUN apt-get install -y curl
 
 ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.8/tmpl_linux_amd64
-ARG TMPL_SHA256SUM=6642b99f035a381f95546eb2345ea55b6f6e86ef177f79a936a730ca655f474b
+ARG TMPL_SHA256SUM=9cb3a6d48405ef8bf7711d6e0be3a62e2c8257a147dcab1e04f6850f363eeed5
 RUN curl -fsSLo tmpl ${TMPL_URL} \
 		&& sha256sum tmpl \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
