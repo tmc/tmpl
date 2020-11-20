@@ -12,11 +12,11 @@ $ tmpl -h
 {{.HELP}}
 ```
 
-It includes all of the template helpers from [sprig](https://godoc.org/github.com/Masterminds/sprig).
-
 It effectively exposes Go's [text/template](http://golang.org/pkg/text/template) for use in shells.
 
 Reference [text/template](http://golang.org/pkg/text/template) documentation for template language specification.
+
+It includes all of the template helpers from [sprig](https://godoc.org/github.com/Masterminds/sprig).
 
 ## Safe Dockerfile Inclusion
 
