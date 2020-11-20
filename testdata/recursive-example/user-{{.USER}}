@@ -1,0 +1,6 @@
+For the current user {{.USER}}:
+Shell: {{.SHELL}}
+EDITOR: {{.EDITOR}}
+{{- if eq "vim" .EDITOR }}
+😎
+{{ end }}

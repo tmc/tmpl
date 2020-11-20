@@ -2,9 +2,22 @@
 
 Command tmpl renders a template with the current env vars as input.
 
+tmpl packs a punch in under 200 lines of code: a single static binary supplies the capabilities of
+many more cmplicating templating engines.
+
+It's especially helpful as an early entrypoint into containers to prepare configuration files.
+
 ```sh
 $ tmpl -h
-
+Usage of tmpl:
+  -f string
+    	Input source (default "-")
+  -html
+    	If true, use html/template instead of text/template
+  -r string
+    	If provided, traverse the argument as a directory, output is a tarball
+  -w string
+    	Output destination (default "-")
 ```
 
 It includes all of the template helpers from [sprig](https://godoc.org/github.com/Masterminds/sprig).
@@ -45,7 +58,21 @@ Invoking
 
 Produces
 
-
 	VERSION=4dce1b0a03b59b5d63c876143e9a9a0605855748
 
+### Example 3
+Given a directory via the `-r` flag, tmpl recurses, expanding each path and file and produces a tarball to the output destination.
 
+
+Invoking
+
+    $ mkdir testdata/recursive-out
+	$ tmpl -r testdata/recursive-example | tar -C testdata/recursive-out --strip-components=2 -xvf -
+	$ cat testdata/recursive-out/user-tmc
+
+Produces (for me, at time of writing)
+
+	For the current user tmc:
+	Shell: /bin/bash
+	EDITOR: vim
+	😎
