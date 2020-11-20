@@ -3,7 +3,7 @@
 Command tmpl renders a template with the current env vars as input.
 
 tmpl packs a punch in under 200 lines of code: a single static binary supplies the capabilities of
-many more cmplicating templating engines.
+many more complicated templating engines.
 
 It's especially helpful as an early entrypoint into containers to prepare configuration files.
 

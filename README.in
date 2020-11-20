@@ -3,7 +3,7 @@
 Command tmpl renders a template with the current env vars as input.
 
 tmpl packs a punch in under 200 lines of code: a single static binary supplies the capabilities of
-many more cmplicating templating engines.
+many more complicated templating engines.
 
 It's especially helpful as an early entrypoint into containers to prepare configuration files.
 
@@ -30,10 +30,8 @@ RUN apt-get install -y curl
 ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/{{ .LATEST_TAG }}/tmpl_linux_amd64
 ARG TMPL_SHA256SUM={{ .LINUX_SHASUM }}
 RUN curl -fsSLo tmpl ${TMPL_URL} \
-		&& sha256sum tmpl \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
-		&& chmod +x tmpl \
-		&& mv tmpl /usr/local/bin/tmpl
+		&& chmod +x tmpl && mv tmpl /usr/local/bin/tmpl
 ```
 
 
