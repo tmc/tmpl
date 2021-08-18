@@ -16,6 +16,8 @@ Usage of tmpl:
     	If true, use html/template instead of text/template
   -r string
     	If provided, traverse the argument as a directory
+  -stripn int
+    	If provided, strips this many directories from the output (only valid if -r and -w are provided)
   -w string
     	Output destination (default "-")
 ```
@@ -35,7 +37,7 @@ FROM ubuntu:bionic
 RUN apt-get update
 RUN apt-get install -y curl
 
-ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.8/tmpl_linux_amd64
+ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.9/tmpl_linux_amd64
 ARG TMPL_SHA256SUM=9cb3a6d48405ef8bf7711d6e0be3a62e2c8257a147dcab1e04f6850f363eeed5
 RUN curl -fsSLo tmpl ${TMPL_URL} \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
@@ -65,7 +67,7 @@ function install_tmpl() {
   else
     TMPL_SHA256SUM=9cb3a6d48405ef8bf7711d6e0be3a62e2c8257a147dcab1e04f6850f363eeed5
   fi
-  TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.8/tmpl_${platform}_amd64
+  TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.9/tmpl_${platform}_amd64
   curl -fsSLo tmpl ${TMPL_URL} \
     && echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
     && chmod +x tmpl
