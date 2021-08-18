@@ -166,7 +166,6 @@ func extractTar(buf io.Reader, outPath string, stripN int) error {
 		if len(parts) > toStrip {
 			path = strings.Join(parts[toStrip:], string(filepath.Separator))
 		}
-		fmt.Println("resulting path:", path)
 		fullPath := filepath.Join(outPath, path)
 		if err := ensureEnclosingDir(fullPath); err != nil {
 			return fmt.Errorf("issue ensuring directory exists: %w", err)
