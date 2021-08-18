@@ -21,13 +21,14 @@ var (
 	flagInput     = flag.String("f", "-", "Input source")
 	flagOutput    = flag.String("w", "-", "Output destination")
 	flagHTML      = flag.Bool("html", false, "If true, use html/template instead of text/template")
-	flagRecursive = flag.String("r", "", "If provided, traverse the argument as a directory, output is a tarball")
+	flagRecursive = flag.String("r", "", "If provided, traverse the argument as a directory")
+	flagStripN    = flag.Int("stripn", 0, "If provided, strips this many directories from the output (only valid if -r and -w are provided)")
 )
 
 func main() {
 	flag.Parse()
 	if err := run(*flagInput, *flagOutput, *flagRecursive, *flagHTML); err != nil {
-		fmt.Fprintln(os.Stderr, "error opening input:", err)
+		fmt.Fprintln(os.Stderr, "tmpl error:", err)
 		os.Exit(1)
 	}
 }
@@ -37,12 +38,12 @@ func run(input, output string, recurseDir string, htmlMode bool) error {
 	if err != nil {
 		return err
 	}
+	if recurseDir != "" {
+		return runDir(recurseDir, htmlMode, *flagOutput, *flagStripN, envMap())
+	}
 	out, err := getOutput(*flagOutput)
 	if err != nil {
 		return err
-	}
-	if recurseDir != "" {
-		return runDir(recurseDir, htmlMode, out, envMap())
 	}
 	return tmpl(in, *flagHTML, out, envMap())
 }
@@ -105,9 +106,10 @@ func tmplStr(in string, ctx interface{}) string {
 	return o.String()
 }
 
-func runDir(dir string, htmlMode bool, out io.Writer, ctx interface{}) error {
-	tw := tar.NewWriter(out)
-	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+func runDir(dir string, htmlMode bool, outPath string, stripN int, ctx interface{}) error {
+	buf := new(bytes.Buffer)
+	tw := tar.NewWriter(buf)
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -135,4 +137,62 @@ func runDir(dir string, htmlMode bool, out io.Writer, ctx interface{}) error {
 		}
 		return tw.Flush()
 	})
+	if err != nil {
+		return fmt.Errorf("issue recursing: %w", err)
+	}
+	if outPath == "-" {
+		_, err = io.Copy(os.Stdout, buf)
+		return err
+	}
+	return extractTar(buf, outPath, stripN)
+}
+
+func extractTar(buf io.Reader, outPath string, stripN int) error {
+	tarReader := tar.NewReader(buf)
+	for true {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("Next() failed: %w", err)
+		}
+		path := header.Name
+		parts := strings.Split(path, string(filepath.Separator))
+		toStrip := stripN
+		if toStrip >= len(parts) {
+			toStrip = len(parts) - 1
+		}
+		if len(parts) > toStrip {
+			path = strings.Join(parts[toStrip:], string(filepath.Separator))
+		}
+		fmt.Println("resulting path:", path)
+		fullPath := filepath.Join(outPath, path)
+		if err := ensureEnclosingDir(fullPath); err != nil {
+			return fmt.Errorf("issue ensuring directory exists: %w", err)
+		}
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if err := os.Mkdir(fullPath, 0755); err != nil {
+				return fmt.Errorf("Mkdir() failed: %w", err)
+			}
+		case tar.TypeReg:
+			outFile, err := os.Create(fullPath)
+			if err != nil {
+				return fmt.Errorf("Create() failed: %w", err)
+			}
+			if _, err := io.Copy(outFile, tarReader); err != nil {
+				return fmt.Errorf("io.Copy() failed: %w", err)
+			}
+			outFile.Close()
+
+		default:
+			return fmt.Errorf("extractTar: uknown type: %v in %v", header.Typeflag, header.Name)
+		}
+	}
+	return nil
+}
+
+func ensureEnclosingDir(path string) error {
+	return os.MkdirAll(filepath.Dir(path), 0755)
 }

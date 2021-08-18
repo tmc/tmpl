@@ -15,7 +15,7 @@ Usage of tmpl:
   -html
     	If true, use html/template instead of text/template
   -r string
-    	If provided, traverse the argument as a directory, output is a tarball
+    	If provided, traverse the argument as a directory
   -w string
     	Output destination (default "-")
 ```
