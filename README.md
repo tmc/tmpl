@@ -38,7 +38,7 @@ RUN apt-get update
 RUN apt-get install -y curl
 
 ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.9/tmpl_linux_amd64
-ARG TMPL_SHA256SUM=9cb3a6d48405ef8bf7711d6e0be3a62e2c8257a147dcab1e04f6850f363eeed5
+ARG TMPL_SHA256SUM=1f68a5d8435bcabd369e37a998a962ace9e6b7aae4be48a0af11a5425f168d26
 RUN curl -fsSLo tmpl ${TMPL_URL} \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
 		&& chmod +x tmpl && mv tmpl /usr/local/bin/tmpl
@@ -63,9 +63,9 @@ esac
 
 function install_tmpl() {
   if [[ "${platform}" == "darwin" ]]; then
-    TMPL_SHA256SUM=384e052c0e36b6afd9a21eb3728f998329d822e2e310310b021a4851728cde0e
+    TMPL_SHA256SUM=dc286e3808825e33368652d4fb58643e714df73ecdea50bd708340a799b8bfed
   else
-    TMPL_SHA256SUM=9cb3a6d48405ef8bf7711d6e0be3a62e2c8257a147dcab1e04f6850f363eeed5
+    TMPL_SHA256SUM=1f68a5d8435bcabd369e37a998a962ace9e6b7aae4be48a0af11a5425f168d26
   fi
   TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.9/tmpl_${platform}_amd64
   curl -fsSLo tmpl ${TMPL_URL} \
