@@ -122,7 +122,7 @@ func runDir(dir string, htmlMode bool, outPath string, stripN int, ctx interface
 		}
 		contents, err := tmplToString(f, htmlMode, ctx)
 		if err != nil {
-			return err
+			return fmt.Errorf("%v: %w", path, err)
 		}
 		hdr := &tar.Header{
 			Name: tmplStr(path, ctx),
