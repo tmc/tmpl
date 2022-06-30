@@ -37,8 +37,8 @@ FROM ubuntu:bionic
 RUN apt-get update
 RUN apt-get install -y curl
 
-ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.10/tmpl_linux_amd64
-ARG TMPL_SHA256SUM=90bfc50f5c8b089a3e2abbfc3bf48a911c46a8b5396540f43662197ca29d829a
+ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.11/tmpl_linux_amd64
+ARG TMPL_SHA256SUM=80b2c20c4c5fa6352d962b6a8dee406652e61153fa1afb520a4d51eb3eb0e0f7
 RUN curl -fsSLo tmpl ${TMPL_URL} \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
 		&& chmod +x tmpl && mv tmpl /usr/local/bin/tmpl
@@ -63,11 +63,11 @@ esac
 
 function install_tmpl() {
   if [[ "${platform}" == "darwin" ]]; then
-    TMPL_SHA256SUM=992e2c7e43b26a619b59e4ad8145c6e33d139654b47f3528df72b9a4b7bd9ed4
+    TMPL_SHA256SUM=6325565b39c02cdf39f4eba8ac127013dc96e4d365192fc57c65d3c7c8cb027f
   else
-    TMPL_SHA256SUM=90bfc50f5c8b089a3e2abbfc3bf48a911c46a8b5396540f43662197ca29d829a
+    TMPL_SHA256SUM=80b2c20c4c5fa6352d962b6a8dee406652e61153fa1afb520a4d51eb3eb0e0f7
   fi
-  TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.10/tmpl_${platform}_amd64
+  TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.11/tmpl_${platform}_amd64
   curl -fsSLo tmpl ${TMPL_URL} \
     && echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
     && chmod +x tmpl
