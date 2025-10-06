@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,12 +33,12 @@ func main() {
 }
 
 func run(input, output string, recurseDir string, htmlMode bool) error {
-	in, err := getInput(*flagInput)
+	in, err := getInput(input)
 	if err != nil {
 		return err
 	}
 	if recurseDir != "" {
-		return runDir(recurseDir, htmlMode, *flagOutput, *flagStripN, envMap())
+		return runDir(recurseDir, htmlMode, output, *flagStripN, envMap())
 	}
 	out, err := getOutput(*flagOutput)
 	if err != nil {
@@ -72,7 +71,7 @@ func envMap() map[string]string {
 }
 
 func tmpl(in io.Reader, htmlMode bool, out io.Writer, ctx interface{}) error {
-	i, err := ioutil.ReadAll(in)
+	i, err := io.ReadAll(in)
 	if err != nil {
 		return err
 	}

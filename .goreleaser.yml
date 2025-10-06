@@ -16,6 +16,13 @@ builds:
       - linux
       - windows
       - darwin
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+      - -buildvcs=false
+
+gomod:
+  proxy: true
 checksum:
   name_template: 'checksums.txt'
 

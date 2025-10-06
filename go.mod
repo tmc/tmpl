@@ -1,10 +1,8 @@
 module github.com/tmc/tmpl
 
-go 1.24.0
-
-toolchain go1.24.6
+go 1.20
 
 require (
-	golang.org/x/mod v0.28.0
+	golang.org/x/mod v0.17.0
 	gopkg.in/yaml.v3 v3.0.1
 )
