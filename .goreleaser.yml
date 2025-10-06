@@ -19,18 +19,18 @@ builds:
 checksum:
   name_template: 'checksums.txt'
 
-signs:
-  - artifacts: checksum
-    cmd: sh
-    args:
-      - -c
-      - |
-        if [ -n "${GPG_FINGERPRINT}" ]; then
-          gpg --batch --local-user "${GPG_FINGERPRINT}" --output "${signature}" --detach-sign "${artifact}"
-        else
-          echo "Skipping signing: GPG_FINGERPRINT not set" >&2
-          exit 0
-        fi
+# Uncomment to enable GPG signing (requires GPG_FINGERPRINT env var):
+# signs:
+#   - artifacts: checksum
+#     cmd: gpg
+#     args:
+#       - --batch
+#       - --local-user
+#       - "{{ .Env.GPG_FINGERPRINT }}"
+#       - --output
+#       - "${signature}"
+#       - --detach-sign
+#       - "${artifact}"
 
 snapshot:
   name_template: "{{ .Tag }}-next"
