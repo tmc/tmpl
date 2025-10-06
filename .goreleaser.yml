@@ -18,6 +18,19 @@ builds:
       - darwin
 checksum:
   name_template: 'checksums.txt'
+
+signs:
+  - artifacts: checksum
+    cmd: gpg
+    args:
+      - --batch
+      - --local-user
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - --output
+      - "${signature}"
+      - --detach-sign
+      - "${artifact}"
+
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
