@@ -1,6 +1,6 @@
 module github.com/tmc/tmpl
 
-go 1.20
+go 1.24
 
 require (
 	golang.org/x/mod v0.17.0

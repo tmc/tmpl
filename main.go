@@ -22,6 +22,8 @@ var (
 	flagHTML      = flag.Bool("html", false, "If true, use html/template instead of text/template")
 	flagRecursive = flag.String("r", "", "If provided, traverse the argument as a directory")
 	flagStripN    = flag.Int("stripn", 0, "If provided, strips this many directories from the output (only valid if -r and -w are provided)")
+
+	flagMissingKey = flag.String("missingkey", "default", "Controls behavior during execution if a map is indexed with a key that is not present in the map. Valid values are: default, zero, error")
 )
 
 func main() {
@@ -70,7 +72,7 @@ func envMap() map[string]string {
 	return result
 }
 
-func tmpl(in io.Reader, htmlMode bool, out io.Writer, ctx interface{}) error {
+func tmpl(in io.Reader, htmlMode bool, out io.Writer, ctx any) error {
 	i, err := io.ReadAll(in)
 	if err != nil {
 		return err
@@ -81,22 +83,24 @@ func tmpl(in io.Reader, htmlMode bool, out io.Writer, ctx interface{}) error {
 		if err != nil {
 			return err
 		}
+		tmpl = tmpl.Option(fmt.Sprintf("missingkey=%s", *flagMissingKey))
 		return tmpl.Execute(out, ctx)
 	}
 	tmpl, err := template.New("format string").Funcs(sprig.TxtFuncMap()).Parse(string(i))
 	if err != nil {
 		return err
 	}
+	tmpl = tmpl.Option(fmt.Sprintf("missingkey=%s", *flagMissingKey))
 	return tmpl.Execute(out, ctx)
 }
 
-func tmplToString(in io.Reader, htmlMode bool, ctx interface{}) (string, error) {
+func tmplToString(in io.Reader, htmlMode bool, ctx any) (string, error) {
 	o := bytes.NewBuffer([]byte{})
 	err := tmpl(in, htmlMode, o, ctx)
 	return o.String(), err
 }
 
-func tmplStr(in string, ctx interface{}) string {
+func tmplStr(in string, ctx any) string {
 	o := bytes.NewBuffer([]byte{})
 	err := tmpl(strings.NewReader(in), false, o, ctx)
 	if err != nil {
@@ -105,7 +109,7 @@ func tmplStr(in string, ctx interface{}) string {
 	return o.String()
 }
 
-func runDir(dir string, htmlMode bool, outPath string, stripN int, ctx interface{}) error {
+func runDir(dir string, htmlMode bool, outPath string, stripN int, ctx any) error {
 	buf := new(bytes.Buffer)
 	tw := tar.NewWriter(buf)
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
