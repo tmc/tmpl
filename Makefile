@@ -7,12 +7,10 @@ install:
 
 .PHONY: docs
 docs:
-	@cat README.in | sh -c "HELP='$$(tmpl -h 2>&1)' LATEST_TAG=$$(git tag -l |sort -V |tail -n1) LINUX_SHASUM=$$(grep linux_amd64 dist/checksums.txt |cut -d' ' -f1) MACOS_SHASUM=$$(grep darwin_amd64 dist/checksums.txt |cut -d' ' -f1) tmpl" > README.md
-
-.PHONY: release
-release:
-	go run -mod=mod github.com/goreleaser/goreleaser@v1.9.2
-
-.PHONY: release-dryrun
-release-dryrun:
-	go run -mod=mod github.com/goreleaser/goreleaser@v1.9.2 --snapshot --rm-dist
+	@LATEST_TAG=$$(gh release list --exclude-pre-releases -L1 --jq '.[0].tagName'); \
+	SHAS=$$(gh api repos/tmc/tmpl/releases/tags/$$LATEST_TAG --jq '.assets[] | select(.name | startswith("tmpl-") and contains("amd64") and (endswith(".jsonl")|not)) | .name + " " + .digest' | sed 's/sha256://'); \
+	HELP="$$(tmpl -h 2>&1)" \
+	LATEST_TAG="$$LATEST_TAG" \
+	LINUX_SHASUM=$$(echo "$$SHAS" | awk '/linux/{print $$2}') \
+	MACOS_SHASUM=$$(echo "$$SHAS" | awk '/darwin/{print $$2}') \
+	tmpl < README.in > README.md

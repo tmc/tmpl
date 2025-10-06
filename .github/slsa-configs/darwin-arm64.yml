@@ -1,0 +1,4 @@
+version: 1
+goos: darwin
+goarch: arm64
+binary: tmpl-darwin-arm64
