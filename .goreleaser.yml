@@ -19,6 +19,9 @@ builds:
 checksum:
   name_template: 'checksums.txt'
 
+release:
+  draft: true
+
 # Uncomment to enable GPG signing (requires GPG_FINGERPRINT env var):
 # signs:
 #   - artifacts: checksum
