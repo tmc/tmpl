@@ -27,7 +27,7 @@ FROM ubuntu:bionic
 RUN apt-get update
 RUN apt-get install -y curl
 
-ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/{{ .LATEST_TAG }}/tmpl_linux_amd64
+ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/{{ .LATEST_TAG }}/tmpl-linux-amd64
 ARG TMPL_SHA256SUM={{ .LINUX_SHASUM }}
 RUN curl -fsSLo tmpl ${TMPL_URL} \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
@@ -57,7 +57,7 @@ function install_tmpl() {
   else
     TMPL_SHA256SUM={{ .LINUX_SHASUM }}
   fi
-  TMPL_URL=https://github.com/tmc/tmpl/releases/download/{{ .LATEST_TAG }}/tmpl_${platform}_amd64
+  TMPL_URL=https://github.com/tmc/tmpl/releases/download/{{ .LATEST_TAG }}/tmpl-${platform}-amd64
   curl -fsSLo tmpl ${TMPL_URL} \
     && echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
     && chmod +x tmpl

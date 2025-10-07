@@ -14,6 +14,8 @@ Usage of tmpl:
     	Input source (default "-")
   -html
     	If true, use html/template instead of text/template
+  -missingkey string
+    	Controls behavior during execution if a map is indexed with a key that is not present in the map. Valid values are: default, zero, error (default "default")
   -r string
     	If provided, traverse the argument as a directory
   -stripn int
@@ -37,8 +39,8 @@ FROM ubuntu:bionic
 RUN apt-get update
 RUN apt-get install -y curl
 
-ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.12.4/tmpl_linux_amd64
-ARG TMPL_SHA256SUM=13f00727845c5d9611b710165076328311ee8681991dcc2a8f4f10c81d73cbd7
+ARG TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.13/tmpl-linux-amd64
+ARG TMPL_SHA256SUM=929d40ba862bc0ee91e6d1259595e93f1209ac0f513597b49107f963c3455ca7
 RUN curl -fsSLo tmpl ${TMPL_URL} \
 		&& echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
 		&& chmod +x tmpl && mv tmpl /usr/local/bin/tmpl
@@ -63,11 +65,11 @@ esac
 
 function install_tmpl() {
   if [[ "${platform}" == "darwin" ]]; then
-    TMPL_SHA256SUM=c8931b6f36c21e443b87ea50d7fc28877025907c2376fbe5144327bcaf2c689c
+    TMPL_SHA256SUM=fb21eb116f8e31679a0f316069dcf9580a0800bc0e3967d1ffe3f5a5d599ad23
   else
-    TMPL_SHA256SUM=13f00727845c5d9611b710165076328311ee8681991dcc2a8f4f10c81d73cbd7
+    TMPL_SHA256SUM=929d40ba862bc0ee91e6d1259595e93f1209ac0f513597b49107f963c3455ca7
   fi
-  TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.12.4/tmpl_${platform}_amd64
+  TMPL_URL=https://github.com/tmc/tmpl/releases/download/v1.13/tmpl-${platform}-amd64
   curl -fsSLo tmpl ${TMPL_URL} \
     && echo "${TMPL_SHA256SUM}  tmpl" | sha256sum -c - \
     && chmod +x tmpl

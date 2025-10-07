@@ -7,7 +7,7 @@ install:
 
 .PHONY: docs
 docs:
-	@LATEST_TAG=$$(gh release list --exclude-pre-releases -L1 --jq '.[0].tagName'); \
+	@LATEST_TAG=$$(gh release list --exclude-pre-releases -L1 --json tagName --jq '.[0].tagName'); \
 	SHAS=$$(gh api repos/tmc/tmpl/releases/tags/$$LATEST_TAG --jq '.assets[] | select(.name | startswith("tmpl-") and contains("amd64") and (endswith(".jsonl")|not)) | .name + " " + .digest' | sed 's/sha256://'); \
 	HELP="$$(tmpl -h 2>&1)" \
 	LATEST_TAG="$$LATEST_TAG" \
