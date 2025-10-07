@@ -1,5 +1,7 @@
 # tmpl
 
+[![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev/spec/v1.0/levels#build-l3)
+
 Command tmpl renders a template with the current env vars as input.
 
 tmpl is a single static binary with zero external dependencies that supplies the capabilities of
