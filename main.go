@@ -22,6 +22,7 @@ var (
 	flagHTML      = flag.Bool("html", false, "If true, use html/template instead of text/template")
 	flagRecursive = flag.String("r", "", "If provided, traverse the argument as a directory")
 	flagStripN    = flag.Int("stripn", 0, "If provided, strips this many directories from the output (only valid if -r and -w are provided)")
+	flagTxtar     = flag.Bool("txtar", false, "If true, output in txtar format instead of tar (only valid with -r)")
 
 	flagMissingKey = flag.String("missingkey", "default", "Controls behavior during execution if a map is indexed with a key that is not present in the map. Valid values are: default, zero, error")
 )
@@ -40,7 +41,7 @@ func run(input, output string, recurseDir string, htmlMode bool) error {
 		return err
 	}
 	if recurseDir != "" {
-		return runDir(recurseDir, htmlMode, output, *flagStripN, envMap())
+		return runDir(recurseDir, htmlMode, output, *flagStripN, *flagTxtar, envMap())
 	}
 	out, err := getOutput(*flagOutput)
 	if err != nil {
@@ -109,8 +110,11 @@ func tmplStr(in string, ctx any) string {
 	return o.String()
 }
 
-func runDir(dir string, htmlMode bool, outPath string, stripN int, ctx any) error {
+func runDir(dir string, htmlMode bool, outPath string, stripN int, txtarMode bool, ctx any) error {
 	buf := new(bytes.Buffer)
+	if txtarMode {
+		return runDirTxtar(dir, htmlMode, outPath, stripN, ctx)
+	}
 	tw := tar.NewWriter(buf)
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -197,4 +201,42 @@ func extractTar(buf io.Reader, outPath string, stripN int) error {
 
 func ensureEnclosingDir(path string) error {
 	return os.MkdirAll(filepath.Dir(path), 0755)
+}
+
+func runDirTxtar(dir string, htmlMode bool, outPath string, stripN int, ctx any) error {
+	buf := new(bytes.Buffer)
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.Mode().IsRegular() {
+			return nil
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		contents, err := tmplToString(f, htmlMode, ctx)
+		if err != nil {
+			return fmt.Errorf("%v: %w", path, err)
+		}
+		name := tmplStr(path, ctx)
+		parts := strings.Split(name, string(filepath.Separator))
+		if stripN < len(parts) {
+			name = strings.Join(parts[stripN:], string(filepath.Separator))
+		}
+		fmt.Fprintf(buf, "-- %s --\n%s", name, contents)
+		if !strings.HasSuffix(contents, "\n") {
+			buf.WriteString("\n")
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("issue recursing: %w", err)
+	}
+	if outPath == "-" {
+		_, err = io.Copy(os.Stdout, buf)
+		return err
+	}
+	return os.WriteFile(outPath, buf.Bytes(), 0644)
 }

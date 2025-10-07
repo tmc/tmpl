@@ -2,8 +2,8 @@
 
 Command tmpl renders a template with the current env vars as input.
 
-tmpl packs a punch in under 200 lines of code: a single static binary supplies the capabilities of
-many more complicated templating engines.
+tmpl is a single static binary with zero external dependencies that supplies the capabilities of
+many more complicated templating engines in less than 250 lines of Go code.
 
 It's especially helpful as an early entrypoint into containers to prepare configuration files.
 
@@ -20,6 +20,8 @@ Usage of tmpl:
     	If provided, traverse the argument as a directory
   -stripn int
     	If provided, strips this many directories from the output (only valid if -r and -w are provided)
+  -txtar
+    	If true, output in txtar format instead of tar (only valid with -r)
   -w string
     	Output destination (default "-")
 ```
@@ -28,7 +30,7 @@ It effectively exposes Go's [text/template](http://golang.org/pkg/text/template)
 
 Reference [text/template](http://golang.org/pkg/text/template) documentation for template language specification.
 
-It includes all of the template helpers from [sprig](https://godoc.org/github.com/Masterminds/sprig).
+It includes template helpers compatible with [sprig](https://godoc.org/github.com/Masterminds/sprig) via an embedded, zero-dependency implementation.
 
 ## Safe Dockerfile Inclusion
 
